@@ -12,6 +12,7 @@ jobs:
         REPO: vscode-openshift-tools
         ACCEPT_HEADER: 'Accept: application/vnd.github.v3+json'
         AUTHORIZATION_HEADER: "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check Out Code
         uses: actions/checkout@v2
@@ -20,11 +21,30 @@ jobs:
           echo "REPO_ODO_VERSION=$(cat src/tools.json | jq -r .odo.version)" >> $GITHUB_ENV
           LATEST_RELEASE_RESPONSE=$(curl -X GET -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API_REPO }}/repos/${{ env.OWNER }}/${{ env.ODO_REPO }}/releases/latest")
           echo LATEST_CANDIDATE=$(echo ${LATEST_RELEASE_RESPONSE} | jq -r .tag_name) >> $GITHUB_ENV
+          echo LATEST_RELEASE=$(echo ${LATEST_RELEASE_RESPONSE} | jq -r .tag_name | sed 's|v||') >> $GITHUB_ENV
           echo LATEST_CANDIDATE_URL=$(echo ${LATEST_RELEASE_RESPONSE} | jq -r .html_url) >> $GITHUB_ENV
       - name: Find existing issue for ODO version
         run: |
           echo ISSUE_URL=$(curl -X GET -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API_REPO }}/search/issues?q=update+odo+${{env.LATEST_CANDIDATE}}+in:title+is:issue+repo:rgrunber/${{ env.REPO }}" | jq -r .items[].html_url) >> $GITHUB_ENV
       - name: Create issue to update to latest odo
-        if: ${{ ! (startsWith(env.LATEST_CANDIDATE,'v') && endsWith(env.LATEST_CANDIDATE, env.REPO_ODO_VERSION)) && (env.ISSUE_URL == '') }}
+        if: ${{ ! (startsWith(env.LATEST_CANDIDATE,'v') && endsWith(env.LATEST_CANDIDATE, env.REPO_ODO_VERSION)) && (env.ISSUE_URL != '') }}
         run: |
-          curl -X POST -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API_REPO }}/repos/rgrunber/${{ env.REPO }}/issues" -d '{"title":"'"Update to odo ${{ env.LATEST_CANDIDATE }}"'","body":"'"See ${{ env.LATEST_CANDIDATE_URL }}"'"}'
+          jq --indent 4 '.odo.version = "${{ env.LATEST_RELEASE }}"' src/tools.json | jq --indent 4 '.odo.versionRange = "^${{ env.LATEST_RELEASE }}"' | jq --indent 4 '.odo.versionRangeLabel = "version >= ${{ env.LATEST_RELEASE }}"' > src/tools.json.new
+          mv src/tools.json.new src/tools.json
+          echo "moved the new file into place"
+          for platform in win32 darwin linux; do
+            url=`jq -r .odo.platform.${platform}.url src/tools.json`
+            new_url=`echo ${url} | sed "s|${{ env.REPO_ODO_VERSION }}|${{ env.LATEST_RELEASE }}|"`
+            checksum=`curl -s ${new_url}.sha256`
+            jq --indent 4 ".odo.platform.${platform}.url = \"${new_url}\"" src/tools.json | jq --indent 4 ".odo.platform.${platform}.sha256sum = \"${checksum}\"" > src/tools.json.new
+            mv src/tools.json.new src/tools.json
+          done
+          cat src/tools.json
+          git config --global user.email "openshifttools-bot@users.noreply.github.com"
+          git config --global user.name "openshifttools-bot"
+          git checkout -b "odo-${{ env.LATEST_RELEASE }}"
+          git add -u
+          git commit -m "Update odo to ${{ env.LATEST_RELEASE }}"
+          git push origin "odo-${{ env.LATEST_RELEASE }}"
+          gh pr create -f
+          # curl -X POST -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API_REPO }}/repos/rgrunber/${{ env.REPO }}/issues" -d '{"title":"'"Update to odo ${{ env.LATEST_CANDIDATE }}"'","body":"'"See ${{ env.LATEST_CANDIDATE_URL }}"'"}'
