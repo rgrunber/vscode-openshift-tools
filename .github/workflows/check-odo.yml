@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Get latest ODO version
         run: |
+          gh release --repo ${{ env.OWNER }}/${{ env.TOOL_REPO }} view
           echo "REPO_ODO_VERSION=$(cat src/tools.json | jq -r .odo.version)" >> $GITHUB_ENV
           LATEST_RELEASE_RESPONSE=$(curl -X GET -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API }}/repos/${{ env.OWNER }}/${{ env.TOOL_REPO }}/releases/latest")
           echo "LATEST_RELEASE=$(echo ${LATEST_RELEASE_RESPONSE} | jq -r .tag_name | sed 's|v||')" >> $GITHUB_ENV
