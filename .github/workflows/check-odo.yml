@@ -24,7 +24,7 @@ jobs:
           echo "LATEST_TOOL_URL=$(echo ${LATEST_TOOL_RELEASE_RESP} | jq -r .url)" >> $GITHUB_ENV
       - name: Find existing issue for ODO version
         run: |
-          echo ISSUE_URL=$(curl -X GET -H "${{ env.AUTHORIZATION_HEADER }}" -H "${{ env.ACCEPT_HEADER }}" "${{ env.API }}/search/issues?q=update+odo+${{env.LATEST_TOOL_RELEASE}}+in:title+is:pull-request+repo:rgrunber/${{ env.REPO }}" | jq -r .items[].html_url) >> $GITHUB_ENV
+          echo ISSUE_URL=$(gh pr --repo rgrunber/${{ env.REPO }} list --state all --search "update odo ${{env.LATEST_TOOL_RELEASE}} in:title") >> $GITHUB_ENV
       - name: Update src/tools.json with latest odo version
         if: ${{ (env.LATEST_TOOL_RELEASE != env.REPO_ODO_VERSION) && (env.ISSUE_URL != '') }}
         run: |
