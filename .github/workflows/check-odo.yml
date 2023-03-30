@@ -19,9 +19,9 @@ jobs:
           echo "LATEST_TOOL_URL=$(echo ${LATEST_TOOL_RELEASE_RESP} | jq -r .url)" >> $GITHUB_ENV
       - name: Find existing PR for ODO version
         run: |
-          echo PR_URL=$(gh pr --repo ${{ github.repository }} list --state all --search "update odo ${{env.LATEST_TOOL_RELEASE}} in:title" --json url) >> $GITHUB_ENV
+          echo PR_URL=$(gh pr --repo rgrunber/vscode-openshift-tools list --state all --search "update odo ${{env.LATEST_TOOL_RELEASE}} in:title" --json url) >> $GITHUB_ENV
       - name: Update src/tools.json with latest odo version
-        if: ${{ (env.LATEST_TOOL_RELEASE != env.REPO_ODO_VERSION) && (env.PR_URL == '') }}
+        if: ${{ (env.LATEST_TOOL_RELEASE != env.REPO_ODO_VERSION) && (env.PR_URL != '') }}
         run: |
           jq --indent 4 '.odo.version = "${{ env.LATEST_TOOL_RELEASE }}"' src/tools.json | jq --indent 4 '.odo.versionRange = "^${{ env.LATEST_TOOL_RELEASE }}"' | jq --indent 4 '.odo.versionRangeLabel = "version >= ${{ env.LATEST_TOOL_RELEASE }}"' > src/tools.json.new
           mv src/tools.json.new src/tools.json
@@ -33,7 +33,7 @@ jobs:
             mv src/tools.json.new src/tools.json
           done
       - name: Create pull request
-        if: ${{ (env.LATEST_TOOL_RELEASE != env.REPO_ODO_VERSION) && (env.PR_URL == '') }}
+        if: ${{ (env.LATEST_TOOL_RELEASE != env.REPO_ODO_VERSION) && (env.PR_URL != '') }}
         run: |
           git config --global user.email "openshifttools-bot@users.noreply.github.com"
           git config --global user.name "openshifttools-bot"
