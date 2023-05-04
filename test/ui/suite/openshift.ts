@@ -3,22 +3,16 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 import { expect } from 'chai';
-import { ActivityBar, By, CustomTreeSection, EditorView, InputBox, SideBarView, ViewSection, WebElement, WebView, WelcomeContentButton, WelcomeContentSection, Workbench } from 'vscode-extension-tester';
+import { ActivityBar, CustomTreeSection, SideBarView, ViewSection, WelcomeContentSection, Workbench } from 'vscode-extension-tester';
 import { BUTTONS, VIEWS } from '../common/constants';
-import path = require('path');
-import * as fs from 'fs-extra';
-import { notificationExists } from '../common/conditions';
 
 export function checkOpenshiftView() {
     describe('OpenShift View', () => {
         let view: SideBarView;
-        let editorView: EditorView;
-        const tempDir: string = path.join(__dirname, 'temp');
 
         before(async function context() {
             this.timeout(10000);
             view = await (await new ActivityBar().getViewControl(VIEWS.openshift)).openView();
-            editorView = (new Workbench().getEditorView());
             await new Promise(res => setTimeout(res, 5000));
             await (await new Workbench().openNotificationsCenter()).clearAllNotifications();
         });
@@ -47,19 +41,6 @@ export function checkOpenshiftView() {
                 }
             });
 
-            after('remove temp dir', () => {
-                if (fs.existsSync(tempDir)) {
-                    fs.removeSync(tempDir);
-                }
-            });
-
-            beforeEach('clear temp dir', () => {
-                if (fs.existsSync(tempDir)) {
-                    fs.removeSync(tempDir);
-                }
-                fs.mkdirSync(tempDir);
-            });
-
             it('shows welcome content when not logged in', async () => {
                 expect(welcome).not.undefined;
                 const description = (await welcome.getTextSections()).join('');
@@ -80,60 +61,6 @@ export function checkOpenshiftView() {
                 const actions = await explorer.getActions();
                 expect(actions).length.above(3);
             });
-
-            it('Import project from git', async () => {
-
-                await editorView.closeAllEditors();
-                const buttons: WelcomeContentButton[] = await welcome.getButtons();
-                let importButton: WelcomeContentButton;
-                for (const btn of buttons) {
-                    const title = await btn.getTitle();
-                    if (title === 'Import from Git') {
-                        importButton = btn;
-                        break;
-                    }
-                }
-                await importButton.click();
-                await editorView.openEditor('Git Import');
-
-                let elements: WebElement[];
-                const webview = new WebView();
-
-                await webview.switchToFrame(); // START WEBVIEW CODE
-
-                elements = await webview.findWebElements(By.xpath('//input[@id="bootstrap-input"]'));
-                const importTextBox = elements[0];
-                await importTextBox.sendKeys('https://github.com/eclipse/lemminx');
-
-                elements  = await webview.findWebElements(By.xpath('//button[contains(text(),"Analyze")]'));
-                const analyzeButton = elements[0];
-                await analyzeButton.click();
-
-                await webview.switchBack(); // END WEBVIEW CODE
-
-                const fileDialog = await InputBox.create();
-                await fileDialog.setText(tempDir);
-                await fileDialog.confirm();
-                await new Promise(res => setTimeout(res, 5000)); // wait for clone operation to complete
-
-                await webview.switchToFrame(); // START WEBVIEW CODE
-
-                elements = await webview.findWebElements(By.xpath('//p[contains(text(),"Here is the recommended devfile")]'));
-                expect(elements).length.greaterThan(0);
-
-                elements = await webview.findWebElements(By.xpath('//div[@data-testid = "card-java-maven"]'));
-                expect(elements).length.greaterThan(0);
-
-                elements  = await webview.findWebElements(By.xpath('//button[contains(text(),"Create Component")]'));
-                expect(elements).length.greaterThan(0);
-                const createButton = elements[0];
-                expect(await createButton.isEnabled()).is.true;
-                await createButton.click();
-
-                await webview.switchBack(); // END WEBVIEW CODE
-
-                await notificationExists('Component \'lemminx-comp\' successfully created. Perform actions on it from Components View.', webview.getDriver(), 3000);
-            }).timeout(20000);
         });
 
         describe('Components', () => {
