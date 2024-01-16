@@ -65,7 +65,7 @@
             },
             "darwin-arm64": {
                 "url": "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.7/openshift-client-mac-arm64-4.14.7.tar.gz",
-                "sha256sum": "5f045d5aa7db7e3dd2b125c5f940112a541b77726ad99e9f6b00827f9dee1621",
+                "sha256sum": "d97b84603382e24c9927150b8bfe83be89b0e63f74a593d59022483a8d039600",
                 "dlFileName": "openshift-client-mac-arm64-4.14.7.tar.gz",
                 "cmdFileName": "oc"
             },
@@ -164,7 +164,7 @@
                 "url": "https://developers.redhat.com/content-gateway/rest/mirror2/pub/openshift-v4/clients/helm/3.12.1/helm-linux-arm64.tar.gz",
                 "sha256sum": "2eb64b3d1772ae4ca0f2b34c50826860222c01f8f7306965c9aa84c11b5a83b4",
                 "dlFileName": "helm-linux-arm64.tar.gz",
-                "cmdFileName": "helm-linux-amd64"
+                "cmdFileName": "helm-linux-arm64"
             }
         }
     },

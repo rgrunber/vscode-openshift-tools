@@ -56,8 +56,9 @@ jobs:
           targets["win32-x64"]=win32
           targets["win32-arm64"]=win32
           targets["linux-x64"]=linux
+          targets["linux-arm64"]=linux-arm64
           targets["darwin-x64"]=darwin
-          targets["darwin-arm64"]=darwin
+          targets["darwin-arm64"]=darwin-arm64
           for target in ${!targets[@]}; do
             export TARGET=${targets[${target}]}
             vsce package --target ${target} -o openshift-toolkit-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${target}.vsix
