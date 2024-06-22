@@ -1,7 +1,7 @@
 {
     "odo": {
-        "description": "odo CLI",
-        "vendor": "Red Hat, Inc.",
+        "description": "ODO CLI tool",
+        "vendor": "Red Hat Developer",
         "name": "odo",
         "version": "3.15.0",
         "versionRange": "^3.15.0",
@@ -10,32 +10,32 @@
         "filePrefix": "",
         "platform": {
             "win32": {
-                "url": "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/odo/v3.15.0/odo-windows-amd64.exe.zip",
-                "sha256sum": "cf8ddcd46025325dd9e5f8b5f38ef8ea45d49a79c127b48c2b9c5b2ccb93afaa",
-                "dlFileName": "odo-windows-amd64.exe.zip",
-                "cmdFileName": "odo-windows-amd64.exe"
+                "url": "https://s3.eu-de.cloud-object-storage.appdomain.cloud/odo-nightly-builds/odo-windows-amd64-e9525d6f7.zip",
+                "sha256sum": "83dbfb0879650131eeced75f66b3262e81559e5e5962c69e052e3a47d3bb4602",
+                "dlFileName": "odo-windows-amd64.zip",
+                "cmdFileName": "odo.exe"
             },
             "darwin": {
-                "url": "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/odo/v3.15.0/odo-darwin-amd64.tar.gz",
-                "sha256sum": "45e96d490c593d994689156d17f5e1f1bf208f651ce19d74160ef12cb741b113",
+                "url": "https://s3.eu-de.cloud-object-storage.appdomain.cloud/odo-nightly-builds/odo-darwin-amd64-e9525d6f7.tar.gz",
+                "sha256sum": "f64948df585c1797b268993384b779a639c3c620382d159eb6ce0e642073aedd",
                 "dlFileName": "odo-darwin-amd64.tar.gz",
-                "cmdFileName": "odo-darwin-amd64"
+                "cmdFileName": "odo"
             },
             "darwin-arm64": {
-                "url": "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/odo/v3.15.0/odo-darwin-arm64.tar.gz",
-                "sha256sum": "dade9c0679d2624d80818ed66a5d80d161c291b6a9e72dde8c6b7573843c175e",
+                "url": "https://s3.eu-de.cloud-object-storage.appdomain.cloud/odo-nightly-builds/odo-darwin-arm64-e9525d6f7.tar.gz",
+                "sha256sum": "1ec83e37891a74148ac0c3fe477e0e80104617af340e793d325fc800e813407f",
                 "dlFileName": "odo-darwin-arm64.tar.gz",
-                "cmdFileName": "odo-darwin-arm64"
+                "cmdFileName": "odo"
             },
             "linux": {
-                "url": "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/odo/v3.15.0/odo-linux-amd64.tar.gz",
-                "sha256sum": "77e999ec3eca99ea17e9345496866afc9c1ae67d3069c9433659b801dab9c302",
+                "url": "https://s3.eu-de.cloud-object-storage.appdomain.cloud/odo-nightly-builds/odo-linux-amd64-e9525d6f7.tar.gz",
+                "sha256sum": "844f928bc9b24563c823658534b5661e0def882e06f071b1e749b88a040084dd",
                 "dlFileName": "odo-linux-amd64.tar.gz",
                 "cmdFileName": "odo"
             },
             "linux-arm64": {
-                "url": "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/odo/v3.15.0/odo-linux-arm64.tar.gz",
-                "sha256sum": "b154cb06fbc423006b8892b302d5e6701986c9bbaa872efc2a7056b787a152e1",
+                "url": "https://s3.eu-de.cloud-object-storage.appdomain.cloud/odo-nightly-builds/odo-linux-arm64-e9525d6f7.tar.gz",
+                "sha256sum": "47647676434b020760c91ad4905735b1a53a8b2e7a2c4da0305ae755d1afa202",
                 "dlFileName": "odo-linux-arm64.tar.gz",
                 "cmdFileName": "odo"
             }
